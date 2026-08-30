@@ -1,896 +1,1820 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-    <title>V4oyxx!</title>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    >
+
+    <meta name="theme-color" content="#000000">
+
+    <title>V4OYXX!</title>
+
+    <link
+        rel="preconnect"
+        href="https://fonts.googleapis.com"
+    >
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
     <style>
+        /* =========================================================
+           RESET
+           ========================================================= */
+
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: 'Courier New', monospace;
         }
 
-        .custom-cursor {
-            position: fixed;
-            width: 40px;
-            height: 40px;
-            background: url('assets/custom_cursor.png') no-repeat center center;
-            background-size: contain;
-            pointer-events: none;
-            z-index: 9999;
-            transform: translate(-50%, -50%);
+        html,
+        body {
+            width: 100%;
+            min-width: 0;
+            min-height: 100%;
         }
 
-        body:not(.touch-device) {
-            cursor: none;
+        html {
+            background: #000;
+            overflow-x: hidden;
         }
 
         body {
-            background-color: #000;
+            min-height: 100vh;
+            min-height: 100dvh;
+            overflow-x: hidden;
+            overflow-y: auto;
+
+            background: #000;
+
             color: #fff;
-            overflow: hidden;
+
+            font-family:
+                Inter,
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            -webkit-font-smoothing: antialiased;
+            text-rendering: optimizeLegibility;
         }
 
-        .container {
-            width: 100%;
-            height: 100vh;
-            position: relative;
+        button,
+        input {
+            font: inherit;
         }
+
+        img,
+        video {
+            display: block;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        /* =========================================================
+           BACKGROUND VIDEO
+           ========================================================= */
 
         #background {
             position: fixed;
+
             top: 0;
             left: 0;
-            width: 100%;
-            height: 100%;
+
+            width: 100vw;
+            height: 100vh;
+
+            width: 100dvw;
+            height: 100dvh;
+
+            min-width: 100%;
+            min-height: 100%;
+
             object-fit: cover;
+            object-position: center center;
+
+            background: #000;
+
+            z-index: 0;
+
+            pointer-events: none;
+
+            transform: translateZ(0);
+
+            backface-visibility: hidden;
+
+            -webkit-backface-visibility: hidden;
+        }
+
+        /* Dark layer above the video */
+        .video-darkness {
+            position: fixed;
+
+            inset: 0;
+
+            background:
+                linear-gradient(
+                    rgba(0, 0, 0, 0.35),
+                    rgba(0, 0, 0, 0.58)
+                );
+
             z-index: 1;
+
             pointer-events: none;
         }
 
-        .glitch-overlay {
+        /* Subtle vignette */
+        .vignette {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
+
+            inset: 0;
+
+            background:
+                radial-gradient(
+                    circle at center,
+                    transparent 25%,
+                    rgba(0, 0, 0, 0.45) 100%
+                );
+
             z-index: 2;
-            opacity: 0;
-            transition: opacity 0.5s;
-        }
 
-        #hacker-overlay, #snow-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
             pointer-events: none;
-            z-index: 3;
         }
 
-        .hidden {
-            display: none !important;
-        }
-
-        .controls {
-            position: fixed;
-            bottom: calc(50% - 240px - 10px);
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            gap: 10px;
-            z-index: 20;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 5px 10px;
-            border-radius: 20px;
-            backdrop-filter: blur(5px);
-        }
-
-        .theme-button {
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            background-color: rgba(0, 0, 0, 0.5);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s;
-            font-size: 14px;
-            font-weight: bold;
-        }
-
-        .theme-button:hover {
-            transform: scale(1.1);
-            border-color: rgba(255, 255, 255, 0.8);
-        }
-
-        .volume-control {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .volume-icon {
-            width: 20px;
-            height: 20px;
-            cursor: pointer;
-            display: flex;
-            color: white;
-        }
-
-        .slider {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 80px;
-            height: 5px;
-            border-radius: 5px;
-            background: rgba(255, 255, 255, 0.3);
-            outline: none;
-        }
-
-        .slider::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: white;
-            cursor: pointer;
-        }
-
-        .transparency-control {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .transparency-icon {
-            width: 20px;
-            height: 20px;
-            color: white;
-        }
-
-        .top-controls {
-            position: fixed;
-            bottom: calc(50% - 240px - 60px);
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            z-index: 20;
-            background: rgba(0, 0, 0, 0.7);
-            padding: 8px 12px;
-            border-radius: 20px;
-            backdrop-filter: blur(5px);
-        }
-
-        #profile-block {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 820px;
-            min-height: 332px;
-            background: rgba(0, 0, 0, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 20px;
-            border-radius: 15px;
-            z-index: 20;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            backdrop-filter: blur(10px);
-            opacity: 0;
-            transform-style: preserve-3d;
-            transition: transform 0.5s ease-out;
-            pointer-events: auto;
-        }
-
-        .profile-header {
-            display: flex;
-            align-items: flex-start;
-            gap: 15px;
-        }
-
-        .profile-container {
-            position: relative;
-            width: 150px;
-            height: 150px;
-        }
-
-        .profile-container::after {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            border-radius: 50%;
-            background: radial-gradient(
-                circle at 10px 10px,
-                var(--primary-color, #00CED1) 10%,
-                transparent 15%
-            );
-            animation: orbit 3s linear infinite;
-            z-index: -1;
-            filter: blur(1px);
-            box-shadow: none;
-        }
-
-        .profile-container.fast-orbit::after {
-            animation: fast-orbit 0.5s linear forwards;
-        }
-
-        .profile-picture {
-            width: 150px;
-            height: 150px;
-            border-radius: 50%;
-            object-fit: cover;
-            cursor: pointer;
-            pointer-events: auto;
-            opacity: 1 !important;
-        }
-
-        .profile-info {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-        }
-
-        /* simplified name area (badges removed) */
-        .name-only {
-            display: flex;
-            align-items: center;
-            justify-content: flex-start;
-            gap: 0;
-            margin-bottom: 10px;
-        }
-
-        @font-face {
-            font-family: 'Angel Wish';
-            src: url('assets/Angel_wish.ttf') format('truetype');
-            font-weight: normal;
-            font-style: normal;
-        }
-
-        #profile-name {
-            font-family: 'Angel Wish', sans-serif;
-            font-size: 32px;
-            font-weight: bold;
-            letter-spacing: 3px;
-            color: #fff;
-            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.7));
-            opacity: 1 !important;
-        }
-
-        /* removed badge styles to avoid leftover spacing */
-
-        #profile-bio {
-            color: rgba(255, 255, 255, 0.8);
-            font-size: 18px;
-            line-height: 1.5;
-            margin-bottom: 10px;
-            opacity: 1 !important;
-        }
-
-        .bio-separator {
-            width: 100%;
-            height: 1px;
-            background: rgba(255, 255, 255, 0.2);
-            margin: 20px 0;
-            opacity: 1 !important;
-        }
-
-        .profile-footer {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            width: 100%;
-            margin-top: auto;
-        }
-
-        .visitor-counter {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(255, 255, 255, 0.1);
-            padding: 8px 15px;
-            border-radius: 20px;
-            font-size: 14px;
-            align-self: flex-start;
-            position: relative;
-            pointer-events: auto;
-            opacity: 1 !important;
-        }
-
-        .visitor-icon {
-            width: 18px;
-            height: 18px;
-            color: white;
-            opacity: 1 !important;
-        }
-
-        .visitor-counter .tooltip {
-            visibility: hidden;
-            width: 120px;
-            background-color: rgba(0, 0, 0, 0.8);
-            color: #fff;
-            text-align: center;
-            border-radius: 6px;
-            padding: 5px 0;
-            position: absolute;
-            z-index: 100;
-            top: -35px;
-            left: 50%;
-            margin-left: -60px;
-            opacity: 0;
-            transition: opacity 0.3s;
-        }
-
-        .visitor-counter:hover .tooltip {
-            visibility: visible;
-            opacity: 1 !important;
-        }
-
-        #visitor-count {
-            opacity: 1 !important;
-        }
-
-        .social-links {
-            display: flex;
-            justify-content: center;
-            gap: 12px;
-            margin-top: 0;
-            pointer-events: auto;
-            opacity: 1 !important;
-        }
-
-        .social-icon {
-            width: 36px;
-            height: 36px;
-            transition: transform 0.3s ease;
-            filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.7));
-            pointer-events: auto;
-            opacity: 1 !important;
-        }
-
-        .social-icon:hover {
-            transform: scale(1.4) rotateY(15deg);
-        }
-
-        #skills-block {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 820px;
-            min-height: 332px;
-            background: rgba(0, 0, 0, 0.7);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            padding: 20px;
-            border-radius: 15px;
-            z-index: 20;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            backdrop-filter: blur(10px);
-            transform-style: preserve-3d;
-            transition: transform 0.5s ease-out;
-        }
-
-        .skills-title {
-            text-align: center;
-            font-size: 24px;
-            margin-bottom: 15px;
-        }
-
-        .skill {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .skill-name {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .skill-icon {
-            width: 22px;
-            height: 22px;
-            margin-right: 8px;
-        }
-
-        .skill-bar-container {
-            height: 10px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 5px;
-            overflow: hidden;
-        }
-
-        .skill-bar {
-            height: 100%;
-            border-radius: 5px;
-            width: 0%;
-            transition: width 2s;
-        }
-
-        #python-bar {
-            background: linear-gradient(90deg, #ff6b6b, #ff9f9f);
-        }
-
-        #cpp-bar {
-            background: linear-gradient(90deg, #4facfe, #00f2fe);
-        }
-
-        #csharp-bar {
-            background: linear-gradient(90deg, #43e97b, #38f9d7);
-        }
-
-        #results-button-container {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 20;
-        }
-
-        #results-theme {
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            padding: 8px 15px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-family: 'Courier New', monospace;
-            font-size: 14px;
-            backdrop-filter: blur(5px);
-            transition: all 0.3s;
-        }
-
-        #results-theme:hover {
-            background: rgba(0, 0, 0, 0.9);
-            border-color: rgba(255, 255, 255, 0.8);
-        }
-
-        #results-hint {
-            position: absolute;
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            padding: 8px 12px;
-            border-radius: 10px;
-            font-size: 12px;
-            width: 180px;
-            text-align: center;
-            pointer-events: none;
-            z-index: 25;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        #results-hint::before {
-            content: '';
-            position: absolute;
-            top: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            border-width: 0 10px 10px 10px;
-            border-style: solid;
-            border-color: transparent transparent rgba(0, 0, 0, 0.8) transparent;
-        }
-
-        .home-theme #profile-block,
-        .home-theme #skills-block {
-            border-color: rgba(0, 195, 255, 0.5);
-        }
-
-        .hacker-theme #profile-block,
-        .hacker-theme #skills-block {
-            border-color: rgba(0, 255, 0, 0.5);
-        }
-
-        .rain-theme #profile-block,
-        .rain-theme #skills-block {
-            border-color: rgba(100, 149, 237, 0.5);
-        }
-
-        .anime-theme #profile-block,
-        .anime-theme #skills-block {
-            border-color: rgba(255, 0, 255, 0.5);
-        }
-
-        .car-theme #profile-block,
-        .car-theme #skills-block {
-            border-color: rgba(255, 165, 0, 0.5);
-        }
-
-        .glitch {
-            animation: glitch 0.2s ease-in-out;
-        }
-
-        @keyframes glitch {
-            0% {
-                transform: translate(0);
-            }
-            20% {
-                transform: translate(-2px, 2px);
-            }
-            40% {
-                transform: translate(-2px, -2px);
-            }
-            60% {
-                transform: translate(2px, 2px);
-            }
-            80% {
-                transform: translate(2px, -2px);
-            }
-            100% {
-                transform: translate(0);
-            }
-        }
-
-        @keyframes orbit {
-            0% {
-                transform: rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        @keyframes fast-orbit {
-            0% {
-                transform: rotate(0deg);
-            }
-            100% {
-                transform: rotate(360deg);
-            }
-        }
-
-        .cursor-trail {
-            position: fixed;
-            pointer-events: none;
-            z-index: 9999;
-        }
-
-        .cursor-trail-dot {
-            position: absolute;
-            width: 6px;
-            height: 6px;
-            background-color: rgba(255, 255, 255, 0.8);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            transition: opacity 0.3s ease;
-        }
+        /* =========================================================
+           START SCREEN
+           ========================================================= */
 
         #start-screen {
             position: fixed;
-            top: 0;
-            left: 0;
+
+            inset: 0;
+
             width: 100%;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(10px);
+            height: 100%;
+
             display: flex;
+
             align-items: center;
             justify-content: center;
-            z-index: 30;
+
+            padding:
+                max(24px, env(safe-area-inset-top))
+                max(24px, env(safe-area-inset-right))
+                max(24px, env(safe-area-inset-bottom))
+                max(24px, env(safe-area-inset-left));
+
+            background: #000;
+
+            z-index: 100;
+
+            cursor: pointer;
+
+            transition:
+                opacity 0.55s ease,
+                visibility 0.55s ease;
+        }
+
+        #start-screen.hide {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+
+        .start-box {
+            text-align: center;
+
+            width: min(90vw, 500px);
+
+            padding: 32px 24px;
+        }
+
+        .start-title {
+            font-size: clamp(24px, 7vw, 42px);
+
+            font-weight: 800;
+
+            letter-spacing: -0.03em;
+
+            margin-bottom: 12px;
+        }
+
+        .start-subtitle {
+            color: rgba(255, 255, 255, 0.58);
+
+            font-size: clamp(13px, 3.5vw, 15px);
+
+            line-height: 1.6;
+
+            margin-bottom: 24px;
+        }
+
+        .start-button {
+            display: inline-flex;
+
+            align-items: center;
+            justify-content: center;
+
+            min-width: 150px;
+            min-height: 50px;
+
+            padding: 12px 24px;
+
+            border: 1px solid rgba(255, 255, 255, 0.18);
+
+            border-radius: 14px;
+
+            background:
+                rgba(255, 255, 255, 0.08);
+
+            color: #fff;
+
+            font-size: 14px;
+
+            font-weight: 700;
+
+            letter-spacing: 0.02em;
+
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+
+            transition:
+                transform 0.2s ease,
+                background 0.2s ease,
+                border-color 0.2s ease;
+        }
+
+        #start-screen:active .start-button {
+            transform: scale(0.96);
+        }
+
+        @media (hover: hover) {
+            #start-screen:hover .start-button {
+                background:
+                    rgba(255, 255, 255, 0.13);
+
+                border-color:
+                    rgba(255, 255, 255, 0.3);
+
+                transform:
+                    translateY(-2px);
+            }
+        }
+
+        /* =========================================================
+           PAGE
+           ========================================================= */
+
+        .page {
+            position: relative;
+
+            z-index: 3;
+
+            width: 100%;
+
+            min-height: 100vh;
+            min-height: 100dvh;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            padding:
+                80px 20px
+                110px;
+        }
+
+        /* =========================================================
+           PROFILE CARD
+           ========================================================= */
+
+        .profile-card {
+            width: min(100%, 560px);
+
+            padding: 28px;
+
+            border:
+                1px solid
+                rgba(255, 255, 255, 0.14);
+
+            border-radius: 24px;
+
+            background:
+                rgba(10, 10, 10, 0.38);
+
+            box-shadow:
+                0 25px 90px
+                rgba(0, 0, 0, 0.45);
+
+            backdrop-filter: blur(18px);
+            -webkit-backdrop-filter: blur(18px);
+
+            transition:
+                transform 0.35s ease,
+                opacity 0.35s ease;
+        }
+
+        .profile-card.hidden {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        /* =========================================================
+           HEADER
+           ========================================================= */
+
+        .profile-header {
+            display: flex;
+
+            align-items: center;
+
+            gap: 18px;
+        }
+
+        .profile-picture-wrap {
+            flex: 0 0 auto;
+        }
+
+        .profile-picture {
+            width: 92px;
+            height: 92px;
+
+            border-radius: 50%;
+
+            object-fit: cover;
+            object-position: center;
+
+            border:
+                2px solid
+                rgba(255, 255, 255, 0.24);
+
+            box-shadow:
+                0 10px 35px
+                rgba(0, 0, 0, 0.3);
+        }
+
+        .profile-info {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .profile-name {
+            font-size: clamp(23px, 6vw, 34px);
+
+            line-height: 1.1;
+
+            font-weight: 800;
+
+            letter-spacing: -0.04em;
+
+            overflow-wrap: anywhere;
+        }
+
+        .verified {
+            display: inline-flex;
+
+            align-items: center;
+            justify-content: center;
+
+            width: 20px;
+            height: 20px;
+
+            margin-left: 4px;
+
+            border-radius: 50%;
+
+            background: #fff;
+
+            color: #000;
+
+            font-size: 12px;
+
+            vertical-align: middle;
+        }
+
+        .profile-bio {
+            margin-top: 9px;
+
+            color:
+                rgba(255, 255, 255, 0.67);
+
+            font-size: 14px;
+
+            line-height: 1.6;
+
+            overflow-wrap: anywhere;
+        }
+
+        /* =========================================================
+           SEPARATOR
+           ========================================================= */
+
+        .separator {
+            width: 100%;
+            height: 1px;
+
+            margin:
+                24px 0;
+
+            background:
+                rgba(255, 255, 255, 0.11);
+        }
+
+        /* =========================================================
+           SOCIAL LINKS
+           ========================================================= */
+
+        .socials {
+            display: flex;
+
+            align-items: center;
+
+            justify-content: center;
+
+            flex-wrap: wrap;
+
+            gap: 11px;
+        }
+
+        .social-link {
+            width: 46px;
+            height: 46px;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            border:
+                1px solid
+                rgba(255, 255, 255, 0.12);
+
+            border-radius: 14px;
+
+            background:
+                rgba(255, 255, 255, 0.055);
+
+            transition:
+                transform 0.2s ease,
+                background 0.2s ease,
+                border-color 0.2s ease;
+        }
+
+        .social-link img {
+            width: 22px;
+            height: 22px;
+
+            object-fit: contain;
+        }
+
+        @media (hover: hover) {
+            .social-link:hover {
+                transform: translateY(-3px);
+
+                background:
+                    rgba(255, 255, 255, 0.11);
+
+                border-color:
+                    rgba(255, 255, 255, 0.23);
+            }
+        }
+
+        .social-link:active {
+            transform: scale(0.94);
+        }
+
+        /* =========================================================
+           VIEWS
+           ========================================================= */
+
+        .views {
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+
+            gap: 7px;
+
+            margin-top: 20px;
+
+            color:
+                rgba(255, 255, 255, 0.56);
+
+            font-size: 12px;
+        }
+
+        .eye {
+            width: 16px;
+            height: 16px;
+        }
+
+        /* =========================================================
+           SKILLS
+           ========================================================= */
+
+        .skills {
+            margin-top: 28px;
+        }
+
+        .skills-title {
+            margin-bottom: 16px;
+
+            text-align: center;
+
+            font-size: 17px;
+
+            font-weight: 700;
+        }
+
+        .skill {
+            margin-bottom: 15px;
+        }
+
+        .skill:last-child {
+            margin-bottom: 0;
+        }
+
+        .skill-top {
+            display: flex;
+
+            align-items: center;
+
+            gap: 9px;
+
+            margin-bottom: 7px;
+
+            font-size: 12px;
+
+            color:
+                rgba(255, 255, 255, 0.72);
+        }
+
+        .skill-top img {
+            width: 18px;
+            height: 18px;
+
+            object-fit: contain;
+        }
+
+        .skill-percent {
+            margin-left: auto;
+        }
+
+        .bar {
+            width: 100%;
+            height: 6px;
+
+            overflow: hidden;
+
+            border-radius: 999px;
+
+            background:
+                rgba(255, 255, 255, 0.09);
+        }
+
+        .bar-fill {
+            height: 100%;
+
+            border-radius: inherit;
+
+            background: #fff;
+
+            transform-origin: left center;
+
+            animation:
+                barIn 1s ease forwards;
+        }
+
+        .python {
+            width: 87%;
+        }
+
+        .cpp {
+            width: 75%;
+        }
+
+        @keyframes barIn {
+            from {
+                transform: scaleX(0);
+            }
+
+            to {
+                transform: scaleX(1);
+            }
+        }
+
+        /* =========================================================
+           CONTROLS
+           ========================================================= */
+
+        .controls {
+            position: fixed;
+
+            left: 50%;
+
+            bottom:
+                max(20px, env(safe-area-inset-bottom));
+
+            transform:
+                translateX(-50%);
+
+            z-index: 20;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 8px;
+
+            padding: 8px;
+
+            border:
+                1px solid
+                rgba(255, 255, 255, 0.1);
+
+            border-radius: 16px;
+
+            background:
+                rgba(8, 8, 8, 0.5);
+
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+        }
+
+        .control-button {
+            width: 40px;
+            height: 40px;
+
+            border: 0;
+
+            border-radius: 11px;
+
+            background:
+                rgba(255, 255, 255, 0.06);
+
+            color: #fff;
+
+            cursor: pointer;
+
+            font-size: 13px;
+
+            font-weight: 700;
+
+            transition:
+                transform 0.18s ease,
+                background 0.18s ease;
+        }
+
+        .control-button.active {
+            background:
+                rgba(255, 255, 255, 0.16);
+        }
+
+        .control-button:active {
+            transform: scale(0.92);
+        }
+
+        /* =========================================================
+           AUDIO CONTROL
+           ========================================================= */
+
+        .audio-control {
+            position: fixed;
+
+            top: max(18px, env(safe-area-inset-top));
+            right: max(18px, env(safe-area-inset-right));
+
+            z-index: 20;
+
+            display: flex;
+
+            align-items: center;
+
+            gap: 9px;
+
+            padding: 9px 12px;
+
+            border:
+                1px solid
+                rgba(255, 255, 255, 0.1);
+
+            border-radius: 14px;
+
+            background:
+                rgba(8, 8, 8, 0.5);
+
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+        }
+
+        .audio-button {
+            width: 34px;
+            height: 34px;
+
+            border: 0;
+
+            border-radius: 10px;
+
+            background:
+                rgba(255, 255, 255, 0.08);
+
+            color: #fff;
+
+            cursor: pointer;
+
+            display: flex;
+
+            align-items: center;
+            justify-content: center;
+        }
+
+        .volume-slider {
+            width: 80px;
+
+            accent-color: #fff;
+
             cursor: pointer;
         }
 
-        #start-text {
-            font-family: 'Courier New', monospace;
-            font-size: 24px;
-            color: #fff;
+        /* =========================================================
+           ERROR NOTICE
+           ========================================================= */
+
+        #video-error {
+            position: fixed;
+
+            left: 50%;
+            bottom: 85px;
+
+            transform: translateX(-50%);
+
+            width: min(
+                calc(100vw - 32px),
+                520px
+            );
+
+            padding: 12px 15px;
+
             text-align: center;
+
+            border:
+                1px solid
+                rgba(255, 100, 100, 0.2);
+
+            border-radius: 12px;
+
+            background:
+                rgba(35, 0, 0, 0.55);
+
+            color:
+                rgba(255, 210, 210, 0.9);
+
+            font-size: 11px;
+
+            opacity: 0;
+
+            pointer-events: none;
+
+            transition: opacity 0.3s ease;
+
+            z-index: 30;
+        }
+
+        #video-error.show {
+            opacity: 1;
+        }
+
+        /* =========================================================
+           MOBILE
+           ========================================================= */
+
+        @media (max-width: 768px) {
+
+            #background {
+                width: 100vw;
+                height: 100dvh;
+
+                object-fit: cover;
+                object-position: center center;
+            }
+
+            .page {
+                align-items: center;
+
+                padding:
+                    70px 14px
+                    105px;
+            }
+
+            .profile-card {
+                width: 100%;
+
+                max-width: 520px;
+
+                padding: 20px;
+
+                border-radius: 20px;
+            }
+
+            .profile-header {
+                gap: 14px;
+            }
+
+            .profile-picture {
+                width: 72px;
+                height: 72px;
+            }
+
+            .profile-name {
+                font-size: clamp(
+                    21px,
+                    7vw,
+                    30px
+                );
+            }
+
+            .profile-bio {
+                font-size: 13px;
+            }
+
+            .audio-control {
+                padding: 8px 9px;
+            }
+
+            .volume-slider {
+                width: 65px;
+            }
         }
 
         @media (max-width: 430px) {
 
-            #profile-block, #skills-block {
-                width: 90vw;
-                max-width: 350px;
-                min-height: 280px;
-                padding: 15px;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
+            .page {
+                padding:
+                    65px 10px
+                    100px;
+            }
+
+            .profile-card {
+                padding: 17px;
+
+                border-radius: 18px;
             }
 
             .profile-header {
-                flex-direction: column;
-                align-items: center;
-                gap: 10px;
-            }
-
-            .profile-container {
-                width: 120px;
-                height: 120px;
+                align-items: flex-start;
             }
 
             .profile-picture {
-                width: 120px;
-                height: 120px;
+                width: 62px;
+                height: 62px;
             }
 
-            .profile-info {
-                align-items: center;
-                text-align: center;
+            .social-link {
+                width: 42px;
+                height: 42px;
             }
 
-            .name-only {
-                flex-direction: column;
-                align-items: center;
-                gap: 8px;
+            .social-link img {
+                width: 20px;
+                height: 20px;
             }
 
-            #profile-name {
-                font-size: 24px;
-                letter-spacing: 2px;
-            }
-
-            #profile-bio {
-                font-size: 14px;
-                line-height: 1.4;
-            }
-
-            .bio-separator {
-                margin: 15px 0;
-            }
-
-            .social-links {
-                gap: 10px;
-                justify-content: center;
-            }
-
-            .social-icon {
-                width: 32px;
-                height: 32px;
-            }
-
-            .visitor-counter {
-                font-size: 12px;
-                padding: 6px 12px;
-                align-self: center;
-            }
-
-            .visitor-icon {
-                width: 16px;
-                height: 16px;
-            }
-
-            .visitor-counter .tooltip {
-                width: 100px;
-                font-size: 12px;
-                margin-left: -50px;
-                top: -30px;
-            }
-
-            .skills-title {
-                font-size: 18px;
-                margin-bottom: 10px;
-            }
-
-            .skill-icon {
-                width: 18px;
-                height: 18px;
-            }
-
-            .skill-name span {
-                font-size: 14px;
+            .volume-slider {
+                display: none;
             }
 
             .controls {
-                bottom: 20px;
-                gap: 8px;
-                padding: 5px 8px;
+                gap: 5px;
+                padding: 6px;
             }
 
-            .theme-button {
-                width: 28px;
-                height: 28px;
-                font-size: 12px;
+            .control-button {
+                width: 36px;
+                height: 36px;
             }
+        }
 
-            .top-controls {
-                bottom: 70px;
+        /* =========================================================
+           VERY NARROW PHONES
+           ========================================================= */
+
+        @media (max-width: 340px) {
+
+            .profile-header {
                 gap: 10px;
-                padding: 6px 10px;
             }
 
-            .volume-control, .transparency-control {
-                gap: 6px;
+            .profile-picture {
+                width: 55px;
+                height: 55px;
             }
 
-            .volume-icon, .transparency-icon {
-                width: 18px;
-                height: 18px;
+            .profile-name {
+                font-size: 20px;
             }
 
-            .slider {
-                width: 60px;
-                height: 4px;
-            }
-
-            .slider::-webkit-slider-thumb {
-                width: 10px;
-                height: 10px;
-            }
-
-            #results-button-container {
-                top: 10px;
-            }
-
-            #results-theme {
-                padding: 6px 12px;
+            .profile-bio {
                 font-size: 12px;
             }
+        }
 
-            #results-hint {
-                width: 150px;
-                font-size: 10px;
-                padding: 6px 10px;
-            }
+        /* =========================================================
+           REDUCED MOTION
+           ========================================================= */
 
-            #start-text {
-                font-size: 18px;
-                padding: 0 20px;
+        @media (prefers-reduced-motion: reduce) {
+
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+                scroll-behavior: auto !important;
             }
         }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Retro+Gaming&display=swap" rel="stylesheet">
 </head>
-<body class="home-theme" onload="initMedia()">
 
-    <div class="custom-cursor"></div>
+<body>
+
+    <!-- =========================================================
+         BACKGROUND VIDEO
+         ========================================================= -->
+
+    <video
+        id="background"
+        autoplay
+        muted
+        loop
+        playsinline
+        webkit-playsinline
+        preload="auto"
+    >
+        <source
+            src="assets/background.mp4"
+            type="video/mp4"
+        >
+    </video>
+
+    <div class="video-darkness"></div>
+    <div class="vignette"></div>
+
+    <!-- =========================================================
+         START SCREEN
+         ========================================================= -->
 
     <div id="start-screen">
-        <div id="start-text"></div>
+
+        <div class="start-box">
+
+            <div class="start-title">
+                V4OYXX!
+            </div>
+
+            <div class="start-subtitle">
+                Tap anywhere to enter
+            </div>
+
+            <div class="start-button">
+                ENTER
+            </div>
+
+        </div>
+
     </div>
 
-    <div class="container">
+    <!-- =========================================================
+         MAIN PAGE
+         ========================================================= -->
 
-        <video id="background" playsinline webkit-playsinline preload="auto" autoplay loop muted playsinline webkit-playsinline>
-            <source src="assets/background.mp4" type="video/mp4">
-        </video>
+    <main class="page">
 
-        <div class="glitch-overlay"></div>
-        <div id="hacker-overlay" class="hidden"></div>
-        <div id="snow-overlay" class="hidden"></div>
+        <section
+            class="profile-card"
+            id="profile-card"
+        >
 
-        <div id="profile-block">
             <div class="profile-header">
-                <div class="profile-container">
-                    <img src="assets/profile.gif" alt="Profile" class="profile-picture">
+
+                <div class="profile-picture-wrap">
+
+                    <img
+                        src="assets/profile.gif"
+                        alt="Profile"
+                        class="profile-picture"
+                    >
+
                 </div>
+
                 <div class="profile-info">
-                    <div class="name-only">
-                        <div id="profile-name">V4OYXX!</div>
+
+                    <div class="profile-name">
+                        V4OYXX!
+                        <span class="verified">✓</span>
                     </div>
 
-                    <div id="profile-bio"></div>
+                    <div class="profile-bio">
+                        Developer • Creator • V4OYXX
+                    </div>
+
                 </div>
+
             </div>
 
-            <div class="bio-separator"></div>
+            <div class="separator"></div>
 
-            <div class="profile-footer">
-                <div class="social-links">
-                    <a href="https://discord.gg/motiongoats" target="_blank">
-                        <img src="assets/discord.png" alt="Discord" class="social-icon">
-                    </a>
-                    <a href="https://github.com/V4OYXX!" target="_blank">
-                        <img src="assets/github.png" alt="GitHub" class="social-icon">
-                    </a>
-                    <a href="https://www.youtube.com/@S9_Marloww" target="_blank">
-                        <img src="assets/youtube.png" alt="YouTube" class="social-icon">
-                    </a>
-                    <a href="https://www.tiktok.com/@f4ck" target="_blank">
-                        <img src="assets/tiktok.png" alt="TikTok" class="social-icon">
-                    </a>
-                </div>
+            <!-- =================================================
+                 SOCIALS
+                 ================================================= -->
 
-                <div class="visitor-counter">
-                    <svg class="visitor-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                    </svg>
-                    <span id="visitor-count">21234</span>
-                    <span class="tooltip">Profile Views</span>
-                </div>
+            <div class="socials">
+
+                <a
+                    class="social-link"
+                    href="https://discord.gg/motiongoats"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Discord"
+                >
+                    <img
+                        src="assets/discord.png"
+                        alt="Discord"
+                    >
+                </a>
+
+                <a
+                    class="social-link"
+                    href="https://github.com/V4OYXX"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="GitHub"
+                >
+                    <img
+                        src="assets/github.png"
+                        alt="GitHub"
+                    >
+                </a>
+
+                <a
+                    class="social-link"
+                    href="https://www.youtube.com/@S9_Marloww"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="YouTube"
+                >
+                    <img
+                        src="assets/youtube.png"
+                        alt="YouTube"
+                    >
+                </a>
+
+                <a
+                    class="social-link"
+                    href="https://www.tiktok.com/@f4ck"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="TikTok"
+                >
+                    <img
+                        src="assets/tiktok.png"
+                        alt="TikTok"
+                    >
+                </a>
+
             </div>
-        </div>
 
-        <div id="skills-block" class="hidden">
-            <h2 class="skills-title">Programming Skills</h2>
-            <div class="skill">
-                <div class="skill-name">
-                    <img src="assets/python.png" alt="Python" class="skill-icon">
-                    <span>Python</span>
-                    <span>87%</span>
-                </div>
-                <div class="skill-bar-container">
-                    <div id="python-bar" class="skill-bar"></div>
-                </div>
-            </div>
-            <div class="skill">
-                <div class="skill-name">
-                    <img src="assets/cpp.png" alt="C++" class="skill-icon">
-                    <span>C++</span>
-                    <span>75%</span>
-                </div>
-                <div class="skill-bar-container">
-                    <div id="cpp-bar" class="skill-bar"></div>
-                </div>
-            </div>
-            <div class="skill">
-                <div class="skill-name">
-                    <img src="assets/csharp.png" alt="C#" class="skill-icon">
-                    <span>C#</span>
-                    <span>80%</span>
-                </div>
-                <div class="skill-bar-container">
-                    <div id="csharp-bar" class="skill-bar"></div>
-                </div>
-            </div>
-        </div>
+            <!-- =================================================
+                 VIEWS
+                 ================================================= -->
 
-        <div id="results-button-container" class="hidden">
-            <button id="results-theme">View Results</button>
-            <div id="results-hint" class="hidden">Click again to return to profile</div>
-        </div>
+            <div class="views">
 
-        <div class="controls">
-            <div id="home-theme" class="theme-button">1</div>
-            <div id="hacker-theme" class="theme-button">2</div>
-            <div id="rain-theme" class="theme-button">3</div>
-            <div id="anime-theme" class="theme-button">4</div>
-            <div id="car-theme" class="theme-button">5</div>
-        </div>
+                <svg
+                    class="eye"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                >
+                    <path
+                        stroke-linecap="round"
+                        stroke-linejoin="round"
+                        d="
+                        M2.458 12C3.732 7.943
+                        7.523 5 12 5
+                        c4.478 0 8.268 2.943
+                        9.542 7
+                        -1.274 4.057
+                        -5.064 7
+                        -9.542 7
+                        -4.477 0
+                        -8.268-2.943
+                        -9.542-7z
+                        "
+                    ></path>
 
-        <div class="top-controls">
-            <div class="volume-control">
-                <svg id="volume-icon" class="volume-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path>
+                    <circle
+                        cx="12"
+                        cy="12"
+                        r="3"
+                    ></circle>
                 </svg>
-                <input id="volume-slider" class="slider" type="range" min="0" max="1" step="0.01" value="0.3">
+
+                <span>21,234 profile views</span>
+
             </div>
-            <div class="transparency-control">
-                <svg class="transparency-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                </svg>
-                <input id="transparency-slider" class="slider" type="range" min="0" max="1" step="0.01" value="0.7">
+
+            <!-- =================================================
+                 SKILLS
+                 ================================================= -->
+
+            <div class="skills">
+
+                <div class="skills-title">
+                    Programming Skills
+                </div>
+
+                <!-- PYTHON -->
+
+                <div class="skill">
+
+                    <div class="skill-top">
+
+                        <img
+                            src="assets/python.png"
+                            alt="Python"
+                        >
+
+                        <span>
+                            Python
+                        </span>
+
+                        <span class="skill-percent">
+                            87%
+                        </span>
+
+                    </div>
+
+                    <div class="bar">
+
+                        <div
+                            class="bar-fill python"
+                        ></div>
+
+                    </div>
+
+                </div>
+
+                <!-- C++ -->
+
+                <div class="skill">
+
+                    <div class="skill-top">
+
+                        <img
+                            src="assets/cpp.png"
+                            alt="C++"
+                        >
+
+                        <span>
+                            C++
+                        </span>
+
+                        <span class="skill-percent">
+                            75%
+                        </span>
+
+                    </div>
+
+                    <div class="bar">
+
+                        <div
+                            class="bar-fill cpp"
+                        ></div>
+
+                    </div>
+
+                </div>
+
             </div>
-        </div>
+
+        </section>
+
+    </main>
+
+    <!-- =========================================================
+         AUDIO CONTROLS
+         ========================================================= -->
+
+    <div class="audio-control">
+
+        <button
+            id="audio-button"
+            class="audio-button"
+            type="button"
+            aria-label="Toggle music"
+        >
+            🔊
+        </button>
+
+        <input
+            id="volume-slider"
+            class="volume-slider"
+            type="range"
+            min="0"
+            max="1"
+            step="0.01"
+            value="0.30"
+            aria-label="Volume"
+        >
+
     </div>
 
-    <audio id="background-music" loop preload="auto">
-        <source src="assets/background_music.mp3" type="audio/mp3">
-    </audio>
-    <audio id="hacker-music" loop muted>
-        <source src="assets/hacker_music.mp3" type="audio/mp3">
-    </audio>
-    <audio id="rain-music" loop muted>
-        <source src="assets/rain_music.mp3" type="audio/mp3">
-    </audio>
-    <audio id="anime-music" loop muted>
-        <source src="assets/anime_music.mp3" type="audio/mp3">
-    </audio>
-    <audio id="car-music" loop muted>
-        <source src="assets/car_music.mp3" type="audio/mp3">
+    <!-- =========================================================
+         BOTTOM CONTROLS
+         ========================================================= -->
+
+    <div class="controls">
+
+        <button
+            class="control-button active"
+            type="button"
+            data-action="home"
+        >
+            1
+        </button>
+
+        <button
+            class="control-button"
+            type="button"
+            data-action="focus"
+        >
+            2
+        </button>
+
+        <button
+            class="control-button"
+            type="button"
+            data-action="blur"
+        >
+            3
+        </button>
+
+        <button
+            class="control-button"
+            type="button"
+            data-action="dim"
+        >
+            4
+        </button>
+
+        <button
+            class="control-button"
+            type="button"
+            data-action="normal"
+        >
+            5
+        </button>
+
+    </div>
+
+    <!-- =========================================================
+         ERROR
+         ========================================================= -->
+
+    <div id="video-error">
+        Background video could not be loaded.
+        Check assets/background.mp4
+    </div>
+
+    <!-- =========================================================
+         MUSIC
+         ========================================================= -->
+
+    <audio
+        id="background-music"
+        loop
+        preload="auto"
+    >
+        <source
+            src="assets/background_music.mp3"
+            type="audio/mpeg"
+        >
     </audio>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="script.js"></script>
+    <script>
+
+        /* =========================================================
+           ELEMENTS
+           ========================================================= */
+
+        const startScreen =
+            document.getElementById("start-screen");
+
+        const backgroundVideo =
+            document.getElementById("background");
+
+        const backgroundMusic =
+            document.getElementById("background-music");
+
+        const audioButton =
+            document.getElementById("audio-button");
+
+        const volumeSlider =
+            document.getElementById("volume-slider");
+
+        const videoError =
+            document.getElementById("video-error");
+
+        const profileCard =
+            document.getElementById("profile-card");
+
+        const controlButtons =
+            document.querySelectorAll(".control-button");
+
+
+        /* =========================================================
+           AUDIO
+           ========================================================= */
+
+        let musicEnabled = true;
+
+        let volume =
+            Number(volumeSlider.value);
+
+
+        backgroundMusic.volume = volume;
+
+        backgroundMusic.muted = false;
+
+
+        function updateAudioIcon() {
+
+            if (!musicEnabled || backgroundMusic.muted) {
+
+                audioButton.textContent = "🔇";
+
+                return;
+            }
+
+            if (volume <= 0) {
+
+                audioButton.textContent = "🔇";
+
+                return;
+            }
+
+            audioButton.textContent = "🔊";
+        }
+
+
+        async function playMusic() {
+
+            backgroundMusic.volume =
+                Number(volumeSlider.value);
+
+            backgroundMusic.muted = false;
+
+            try {
+
+                await backgroundMusic.play();
+
+                musicEnabled = true;
+
+                updateAudioIcon();
+
+            } catch (error) {
+
+                console.log(
+                    "Music playback waiting for user gesture."
+                );
+
+            }
+        }
+
+
+        function stopMusic() {
+
+            backgroundMusic.pause();
+
+            musicEnabled = false;
+
+            updateAudioIcon();
+        }
+
+
+        audioButton.addEventListener(
+            "click",
+            async () => {
+
+                if (
+                    backgroundMusic.paused ||
+                    !musicEnabled
+                ) {
+
+                    musicEnabled = true;
+
+                    await playMusic();
+
+                } else {
+
+                    stopMusic();
+
+                }
+
+            }
+        );
+
+
+        volumeSlider.addEventListener(
+            "input",
+            () => {
+
+                volume =
+                    Number(volumeSlider.value);
+
+                backgroundMusic.volume =
+                    volume;
+
+                if (volume > 0 && backgroundMusic.paused) {
+
+                    playMusic();
+
+                }
+
+                updateAudioIcon();
+
+            }
+        );
+
+
+        /* =========================================================
+           BACKGROUND VIDEO
+           ========================================================= */
+
+        async function playBackgroundVideo() {
+
+            if (!backgroundVideo) {
+                return;
+            }
+
+            backgroundVideo.muted = true;
+            backgroundVideo.loop = true;
+            backgroundVideo.playsInline = true;
+
+            try {
+
+                await backgroundVideo.play();
+
+            } catch (error) {
+
+                console.log(
+                    "Video autoplay blocked."
+                );
+
+            }
+        }
+
+
+        backgroundVideo.addEventListener(
+            "loadeddata",
+            () => {
+
+                playBackgroundVideo();
+
+            }
+        );
+
+
+        backgroundVideo.addEventListener(
+            "canplay",
+            () => {
+
+                playBackgroundVideo();
+
+            }
+        );
+
+
+        backgroundVideo.addEventListener(
+            "error",
+            () => {
+
+                videoError.classList.add("show");
+
+                setTimeout(
+                    () => {
+                        videoError.classList.remove("show");
+                    },
+                    5000
+                );
+
+            }
+        );
+
+
+        /* =========================================================
+           ENTER SITE
+           IMPORTANT FOR MOBILE AUDIO
+           ========================================================= */
+
+        let entered = false;
+
+
+        async function enterSite(event) {
+
+            if (entered) {
+                return;
+            }
+
+            entered = true;
+
+
+            /*
+             * This function is triggered directly from a
+             * user tap/click.
+             *
+             * That's important for mobile browsers because
+             * audio playback usually requires a user gesture.
+             */
+
+            backgroundMusic.muted = false;
+
+            backgroundMusic.volume =
+                Number(volumeSlider.value);
+
+
+            try {
+
+                await backgroundMusic.play();
+
+                musicEnabled = true;
+
+            } catch (error) {
+
+                console.log(
+                    "Music still blocked by browser."
+                );
+
+            }
+
+
+            playBackgroundVideo();
+
+
+            startScreen.classList.add("hide");
+
+
+            profileCard.classList.remove("hidden");
+
+
+            updateAudioIcon();
+
+        }
+
+
+        startScreen.addEventListener(
+            "pointerdown",
+            enterSite,
+            {
+                passive: true,
+                once: true
+            }
+        );
+
+
+        startScreen.addEventListener(
+            "click",
+            enterSite,
+            {
+                once: true
+            }
+        );
+
+
+        /* =========================================================
+           FALLBACK USER GESTURE
+           ========================================================= */
+
+        document.addEventListener(
+            "pointerdown",
+            () => {
+
+                if (
+                    backgroundVideo.paused
+                ) {
+
+                    playBackgroundVideo();
+
+                }
+
+                if (
+                    !startScreen.classList.contains("hide") === false &&
+                    backgroundMusic.paused &&
+                    musicEnabled
+                ) {
+
+                    playMusic();
+
+                }
+
+            },
+            {
+                passive: true
+            }
+        );
+
+
+        /* =========================================================
+           CONTROLS
+           ========================================================= */
+
+        controlButtons.forEach(
+            (button) => {
+
+                button.addEventListener(
+                    "click",
+                    () => {
+
+                        controlButtons.forEach(
+                            (item) => {
+                                item.classList.remove(
+                                    "active"
+                                );
+                            }
+                        );
+
+                        button.classList.add(
+                            "active"
+                        );
+
+
+                        const action =
+                            button.dataset.action;
+
+
+                        /*
+                         * 1 = normal
+                         */
+
+                        if (action === "home") {
+
+                            backgroundVideo.style.filter =
+                                "none";
+
+                            backgroundVideo.style.transform =
+                                "none";
+
+                            profileCard.style.opacity =
+                                "1";
+
+                        }
+
+
+                        /*
+                         * 2 = slightly brighter
+                         */
+
+                        if (action === "focus") {
+
+                            backgroundVideo.style.filter =
+                                "brightness(1.15) contrast(1.05)";
+
+                            backgroundVideo.style.transform =
+                                "scale(1.03)";
+
+                            profileCard.style.opacity =
+                                "1";
+
+                        }
+
+
+                        /*
+                         * 3 = slightly blurred
+                         */
+
+                        if (action === "blur") {
+
+                            backgroundVideo.style.filter =
+                                "blur(3px) brightness(0.8)";
+
+                            backgroundVideo.style.transform =
+                                "scale(1.04)";
+
+                            profileCard.style.opacity =
+                                "1";
+
+                        }
+
+
+                        /*
+                         * 4 = darker
+                         */
+
+                        if (action === "dim") {
+
+                            backgroundVideo.style.filter =
+                                "brightness(0.55)";
+
+                            backgroundVideo.style.transform =
+                                "scale(1.02)";
+
+                            profileCard.style.opacity =
+                                "0.92";
+
+                        }
+
+
+                        /*
+                         * 5 = reset
+                         */
+
+                        if (action === "normal") {
+
+                            backgroundVideo.style.filter =
+                                "none";
+
+                            backgroundVideo.style.transform =
+                                "none";
+
+                            profileCard.style.opacity =
+                                "1";
+
+                        }
+
+                    }
+                );
+
+            }
+        );
+
+
+        /* =========================================================
+           RESIZE
+           ========================================================= */
+
+        function resizeVideo() {
+
+            if (!backgroundVideo) {
+                return;
+            }
+
+            backgroundVideo.style.width =
+                "100vw";
+
+            backgroundVideo.style.height =
+                "100dvh";
+
+        }
+
+
+        window.addEventListener(
+            "resize",
+            resizeVideo
+        );
+
+
+        window.addEventListener(
+            "orientationchange",
+            () => {
+
+                setTimeout(
+                    resizeVideo,
+                    100
+                );
+
+            }
+        );
+
+
+        /* =========================================================
+           INITIALIZE
+           ========================================================= */
+
+        resizeVideo();
+
+        updateAudioIcon();
+
+        playBackgroundVideo();
+
+    </script>
+
 </body>
 </html>
-
